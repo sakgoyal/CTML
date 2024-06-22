@@ -1115,9 +1115,8 @@ namespace CTML {
 			// append a head and body tag to the html
 			this->m_html.AppendChild(
 				Node("head")
-				.AppendChild(Node("meta").SetAttribute("charset", "UTF-8"))
-				.AppendChild(Node("meta").SetAttribute("name", "viewport").SetAttribute("content", "width=device-width, initial-scale=1.0"))
-			);
+					.AppendChild(Node("meta").SetAttribute("charset", "UTF-8"))
+					.AppendChild(Node("meta").SetAttribute("name", "viewport").SetAttribute("content", "width=device-width, initial-scale=1.0")));
 			this->m_html.AppendChild(Node("body"));
 		}
 
