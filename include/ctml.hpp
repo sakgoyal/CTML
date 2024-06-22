@@ -579,7 +579,7 @@ namespace CTML {
          * Also for this function, the element name should be the first piece
          * of the selector, and if it is not, the name will not be set correctly.
          */
-		constexpr Node& SetName(const std::string& name) {
+		Node& SetName(const std::string& name) {
 			std::vector<SelectorToken> tokens = parse_selector(name);
 
 			return SetName(std::move(tokens));
@@ -1115,8 +1115,9 @@ namespace CTML {
 			// append a head and body tag to the html
 			this->m_html.AppendChild(
 				Node("head")
-					.AppendChild(Node("meta").SetAttribute("charset", "UTF-8"))
-					.AppendChild(Node("meta").SetAttribute("name", "viewport").SetAttribute("content", "width=device-width, initial-scale=1.0")));
+				.AppendChild(Node("meta").SetAttribute("charset", "UTF-8"))
+				.AppendChild(Node("meta").SetAttribute("name", "viewport").SetAttribute("content", "width=device-width, initial-scale=1.0"))
+			);
 			this->m_html.AppendChild(Node("body"));
 		}
 
@@ -1181,7 +1182,7 @@ namespace CTML {
      * Allow sending the string value to ostreams to allow `std::cout << node;`
      * instead of having to do this: `std::cout << node.ToString();`
      */
-	constexpr std::ostream& operator<<(std::ostream& os, CTML::Node& node) {
+	std::ostream& operator<<(std::ostream& os, CTML::Node& node) {
 		os << node.ToString();
 		return os;
 	}
