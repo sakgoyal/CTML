@@ -32,17 +32,7 @@
 #include <vector>
 
 namespace CTML {
-  
-  /** 
-   * Allow sending the string value to ostreams to allow `std::cout << node;`
-   * instead of having to do this: `std::cout << node.ToString();`
-   */
-  ostream& operator<<(std::ostream& os, Node& node) {
-		os << node.ToString();
-		return os;
-	}
-  
-  
+
 	/** Searches the original string and replaces all occurances of the specified string */
 	constexpr void replace_all(std::string& original, const std::string& target, const std::string& replacement) {
 		size_t start = 0;
@@ -447,9 +437,7 @@ namespace CTML {
          * Optionally, you can specify a name as well as content
          * which will be added according to the type.
          */
-		Node(const NodeType& type,
-			 std::string name = "",
-			 std::string content = ""):
+		Node(const NodeType& type, std::string name = "", std::string content = ""):
 			m_type(type) {
 			// Use the name of the Node for the content as content should be ignored
 			if (type == NodeType::COMMENT)
@@ -466,9 +454,7 @@ namespace CTML {
 			}
 		}
 
-		/**
-         * Create an element node with the name specified.
-         */
+		/** Create an element node with the name specified. */
 		Node(std::string name):
 			m_type(NodeType::ELEMENT) {
 			this->SetName(name);
@@ -649,9 +635,7 @@ namespace CTML {
 			return output.str();
 		}
 
-		/**
-         * Set a single attribute for a Node to a value.
-         */
+		/** Set a single attribute for a Node to a value */
 		Node& SetAttribute(const std::string& name, std::string value) {
 			if (name == "id") {
 				m_id = value;
@@ -706,9 +690,7 @@ namespace CTML {
 			return *this;
 		}
 
-		/**
-         * Toggle the state of a class based on its name.
-         */
+		/** Toggle the state of a class based on its name */
 		constexpr Node& ToggleClass(const std::string& className) {
 			std::vector<std::string>::iterator find = std::find(
 				m_classes.begin(),
@@ -1076,18 +1058,10 @@ namespace CTML {
          */
 		Node* m_parent = nullptr;
 
-		/**
-         * The type of Node for this instance.
-         *
-         * Defaults to an ELEMENT.
-         */
+		/** The type of Node for this instance. Defaults to an `ELEMENT` */
 		NodeType m_type = NodeType::ELEMENT;
 
-		/**
-         * The tag name of the current node, such as `div`.
-         *
-         * Only used for elements
-         */
+		/** The tag name of the current node, such as `div` */
 		std::string m_name = "";
 
 		/**
@@ -1097,9 +1071,7 @@ namespace CTML {
          */
 		std::vector<std::string> m_classes;
 
-		/**
-         * A singular ID for this element.
-         */
+		/** A singular ID for this element */
 		std::string m_id = "";
 
 		/**
@@ -1121,9 +1093,6 @@ namespace CTML {
          */
 		bool m_closeTag = true;
 
-		/**
-         * The child nodes of this Node instance.
-         */
 		std::vector<Node> m_children;
 
 		/**
@@ -1140,26 +1109,23 @@ namespace CTML {
      */
 	class Document {
 	  public:
-		/**
-         * Construct a simple HTML5 document with a head and body.
-         */
-		Document():
+		/** Construct a simple default HTML5 document with a head and body */
+		Document(/**const bool tailwind = false */):
 			m_doctype(NodeType::DOCUMENT_TYPE, "html"), m_html("html") {
 			// append a head and body tag to the html
-			this->m_html.AppendChild(Node("head"));
+			this->m_html.AppendChild(
+				Node("head")
+					.AppendChild(Node("meta").SetAttribute("charset", "UTF-8"))
+					.AppendChild(Node("meta").SetAttribute("name", "viewport").SetAttribute("content", "width=device-width, initial-scale=1.0")));
 			this->m_html.AppendChild(Node("body"));
 		}
 
-		/**
-         * Append a single node element to the <head> tag.
-         */
+		/** Append a single node element to the <head> tag */
 		constexpr void AppendNodeToHead(const Node& node) {
 			this->head().AppendChild(node);
 		}
 
-		/**
-         * Append a single node to the <body> tag.
-         */
+		/** Append a single node to the <body> tag */
 		constexpr void AppendNodeToBody(const Node& node) {
 			this->body().AppendChild(node);
 		}
@@ -1188,43 +1154,33 @@ namespace CTML {
 			return m_html.QuerySelector(selector);
 		}
 
-		/**
-         * Return the root HTML document node.
-         */
+		/** Return the root HTML document node */
 		constexpr Node& html() {
 			return m_html;
 		}
 
-		/**
-         * Return the head element for the document.
-         */
+		/** Return the head element for the document */
 		constexpr Node& head() {
 			return m_html.GetChildByName("head");
 		}
 
-		/**
-         * Return the body element for the document.
-         */
+		/** Return the body element for the document. */
 		constexpr Node& body() {
 			return m_html.GetChildByName("body");
 		}
 
 	  private:
-		/**
-         * The doctype node for this document.
-         *
-         * Defaults to be a HTML5 doctype.
-         */
+		/** The doctype node for this document. Defaults to HTML5 */
 		Node m_doctype;
 
-		/**
-         * The root HTML tag for this document.
-         */
+		/** The root HTML tag for this document */
 		Node m_html;
 	};
-} // namespace CTML
 
-namespace CTML {
+	/**
+     * Allow sending the string value to ostreams to allow `std::cout << node;`
+     * instead of having to do this: `std::cout << node.ToString();`
+     */
 	constexpr std::ostream& operator<<(std::ostream& os, CTML::Node& node) {
 		os << node.ToString();
 		return os;
